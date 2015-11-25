@@ -1,0 +1,9 @@
+# mjm : a minimal job manager written in bash (yes bash)
+#
+#   (c) Romain Mueller, name dot surname at gmail dot com
+#
+#
+
+#!/bin/bash
+
+echo "hello"
