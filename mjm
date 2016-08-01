@@ -2,8 +2,23 @@
 #
 #   (c) Romain Mueller, name dot surname at gmail dot com
 #
+# This file simply dispatches the commands as follows:
+#
+#   mjm command arguments 
+#
+# gives
+#
+#   /path/to/mjm/command.sh arguments
 #
 
 #!/bin/bash
 
-echo "hello"
+echo "mjm: a minimal job manager"
+echo "      romain mueller, 2016"
+echo "=========================="
+
+# get env vars
+source ~/.mjm
+
+# run the command
+${MJM_PATH}/${1}.sh
