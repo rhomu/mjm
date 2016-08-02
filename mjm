@@ -13,10 +13,6 @@
 
 #!/bin/bash
 
-echo "mjm: a minimal job manager"
-echo "      romain mueller, 2016"
-echo "=========================="
-
 # get env vars
 source ~/.mjm
 

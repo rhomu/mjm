@@ -11,8 +11,8 @@ if [ $2 == "0" ]; then
   exit 0;
 fi
 
-# Get all sub jobs with that name (i.e. name followed by .number)
-read -a PIDS <<< $( ${MJM_PATH}/list.sh )
+# get all sub jobs with that name (i.e. name followed by .number)
+read -a PIDS <<< $( ${MJM_PATH}/list.sh $1 )
 
 while [ ${#PIDS[@]} -ge $2 ]; do
   sleep 5
