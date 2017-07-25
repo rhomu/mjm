@@ -36,7 +36,7 @@ while getopts ":n:" opt; do
 done
 
 # lock
-${MJM_PATH}/lock.sh
+mjm lock
 
 # construct job name...
 # ...get all numbers of sub-jobs (i.e. name followed by .number)
@@ -79,9 +79,8 @@ JNAME_ESCAPE=$(echo "$JNAME" | sed 's/\./\\\./g')
 PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
 # ...send the command to the screen session
 screen -S "$PID.$JNAME" -p 0 -X stuff "${MJM_PATH}/wait.sh mjm ${MJM_NMAX} ; ( ( ${MJM_PATH}/header.sh && ${CMD} ) | tee ${LNAME} ) ; exit$(printf \\r)"
-${MJM_PATH}/unlock.sh
-# ...wait a bit
-sleep 0.3
 
 # unlock
-${MJM_PATH}/unlock.sh
+mjm unlock
+# ...wait a bit
+sleep 0.3
