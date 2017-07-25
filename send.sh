@@ -57,18 +57,26 @@ if [ -z ${NAME} ] ; then
 else
   CMD="${@:3}"
 fi
-# ... and a timestamp
+# ... check that CMD is not empty
+if [[ -z "${CMD// }" ]]; then
+  echo "Discarding empty command."
+  exit 1
+fi
+# ... and get timestamp
 TS=$(date +%s)
+# ... and log file name
+LNAME=${JNAME}.${TS}.out
 
 # send job...
-echo "Sending job $JNAME ... "
+echo "Sending job ${JNAME} to ${LNAME} ... "
 # ...create session
 screen -dmS "$JNAME" ; sleep 0.5
 # ...escape points in job name
 JNAME_ESCAPE=$(echo "$JNAME" | sed 's/\./\\\./g')
 # ...get PID back (there are sometimes conflicts)
 PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
+# ...write log file header
 # ...send the command to the screen session
-screen -S "$PID.$JNAME" -p 0 -X stuff "${MJM_PATH}/wait.sh mjm ${MJM_NMAX} ; ( ${CMD} | tee ${JNAME}.${TS}.out ) ; exit$(printf \\r)"
+screen -S "$PID.$JNAME" -p 0 -X stuff "${MJM_PATH}/wait.sh mjm ${MJM_NMAX} ; ( ( ${MJM_PATH}/header.sh && ${CMD} ) | tee ${LNAME} ) ; exit$(printf \\r)"
 # ...wait a bit
 sleep 0.3

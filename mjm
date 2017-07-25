@@ -17,4 +17,4 @@
 source ~/.mjm
 
 # run the command
-${MJM_PATH}/${1}.sh
+${MJM_PATH}/${1}.sh ${@:2}
