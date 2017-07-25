@@ -16,7 +16,6 @@
 
 # TBI
 #  * priority/queue
-#  * logging, using tee
 
 # get job name from options
 NAME=""
@@ -35,6 +34,9 @@ while getopts ":n:" opt; do
       ;;
   esac
 done
+
+# lock
+${MJM_PATH}/lock.sh
 
 # construct job name...
 # ...get all numbers of sub-jobs (i.e. name followed by .number)
@@ -57,14 +59,14 @@ if [ -z ${NAME} ] ; then
 else
   CMD="${@:3}"
 fi
-# ... check that CMD is not empty
+# ...check that CMD is not empty
 if [[ -z "${CMD// }" ]]; then
   echo "Discarding empty command."
   exit 1
 fi
-# ... and get timestamp
+# ...and get timestamp
 TS=$(date +%s)
-# ... and log file name
+# ...and log file name
 LNAME=${JNAME}.${TS}.out
 
 # send job...
@@ -75,8 +77,11 @@ screen -dmS "$JNAME" ; sleep 0.5
 JNAME_ESCAPE=$(echo "$JNAME" | sed 's/\./\\\./g')
 # ...get PID back (there are sometimes conflicts)
 PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
-# ...write log file header
 # ...send the command to the screen session
 screen -S "$PID.$JNAME" -p 0 -X stuff "${MJM_PATH}/wait.sh mjm ${MJM_NMAX} ; ( ( ${MJM_PATH}/header.sh && ${CMD} ) | tee ${LNAME} ) ; exit$(printf \\r)"
+${MJM_PATH}/unlock.sh
 # ...wait a bit
 sleep 0.3
+
+# unlock
+${MJM_PATH}/unlock.sh

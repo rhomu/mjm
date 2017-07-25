@@ -14,7 +14,7 @@
 #!/bin/bash
 
 # get env vars
-source ~/.mjm
+source ~/.config/mjm/mjm.cfg
 
 # run the command
 ${MJM_PATH}/${1}.sh ${@:2}
