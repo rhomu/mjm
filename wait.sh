@@ -6,8 +6,8 @@
 #
 # Checks every 5 seconds that the number of subprocesses running on node name is greater than N. If this is not the case, returns.
 
-# if N is set to 0
-if [ $2 == "0" ]; then
+# if N is set to 0 or empty
+if [ $# -le 2 ] || [ $2 == "0" ]; then
   exit 0;
 fi
 
