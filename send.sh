@@ -2,20 +2,17 @@
 
 # Send job using screen. Usage:
 #
-#    ./send_job command
+#    mjm send command
 #
 # or
 #
-#    ./send_job -n name command
+#    mjm send -n name command
 #
 # The screen session is killed after the command returns. EXPLAIN THE NODE STORY. The actual screen session name is
 #
 #    mjm.name.i
 #
 # where i is the smallest job number available (starting from 0). If no name is provided then .name is omited.
-
-# TBI
-#  * priority/queue
 
 # get job name from options
 NAME=""
