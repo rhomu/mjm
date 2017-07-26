@@ -1,18 +1,16 @@
 #!/bin/bash
 
-# Lock all wait queries. Usage
+# Lock globally. Usage
 #
 #    mjm lock
 #
 # If lock is present, wait until unlocked.
 
-echo ${MJM_LOCK_PATH}
-
 # wait for unlock
-while [ -f ${MJM_LOCK_PATH} ]; do
+until ( set -o noclobber ; echo "$$" > "${MJM_LOCK_PATH}" ) 2> /dev/null ; do
   echo "Lock found at ${MJM_LOCK_PATH}, waiting 1 sec."
   sleep 1
 done
 
-# lock
-touch ${MJM_LOCK_PATH}
+# trap to avoid race conditions
+trap 'rm -f "${MJM_LOCK_PATH}"; exit $?' INT TERM
