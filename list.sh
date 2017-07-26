@@ -2,7 +2,7 @@
 
 # List jobs belonging to a certain node. Usage
 #
-#    ./list_jobs name
+#    mjm list name
 #
 
 # get name
