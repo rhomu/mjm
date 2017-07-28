@@ -4,6 +4,8 @@
 #
 #    mjm list name
 #
+# Options: 
+#   -p       Prints only PIDS (for internal use)
 
 # get name
 if [ -z $1 ] ; then

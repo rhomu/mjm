@@ -16,10 +16,14 @@
 
 # get job name from options
 NAME=""
-while getopts ":n:" opt; do
+PRIORITY="normal"
+while getopts ":n:p:" opt; do
   case $opt in
     n)
       NAME=".$OPTARG" >&2
+      ;;
+    p)
+      PRIORITY="$OPTARG" >&2
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -32,6 +36,27 @@ while getopts ":n:" opt; do
   esac
 done
 
+# check priority
+if [ "$PRIORITY" == "very-low" ]
+then
+  :
+elif [ "$PRIORITY" == "low" ]
+then
+  :
+elif [ "$PRIORITY" == "normal" ]
+then
+  :
+elif [ "$PRIORITY" == "high" ]
+then
+  :
+elif [ "$PRIORITY" == "very-high" ]
+then
+  :
+else
+  echo "Unknown priority '$PRIORITY' (should be very-low, low, normal, high, very-high)"
+  exit 1
+fi
+ 
 # lock
 mjm lock
 
@@ -74,8 +99,12 @@ screen -dmS "$JNAME" ; sleep 0.5
 JNAME_ESCAPE=$(echo "$JNAME" | sed 's/\./\\\./g')
 # ...get PID back (there are sometimes conflicts)
 PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
+# ...name of the queue file for the job
+QUEUE_FILE=$MJM_QUEUE_PATH/$PRIORITY/$PID.$JNAME
+# ...write queue file
+touch $QUEUE_FILE
 # ...send the command to the screen session
-screen -S "$PID.$JNAME" -p 0 -X stuff "${MJM_PATH}/wait.sh mjm ${MJM_NMAX} ; ( ( ${MJM_PATH}/header.sh && ${CMD} ) | tee ${LNAME} ) ; exit$(printf \\r)"
+screen -S "$PID.$JNAME" -p 0 -X stuff "${MJM_PATH}/wait.sh ${MJM_NMAX} ; ( ( ${MJM_PATH}/header.sh ; ${CMD} ) | tee ${LNAME} ) ; rm $QUEUE_FILE -f ; exit$(printf \\r)"
 
 # unlock
 mjm unlock

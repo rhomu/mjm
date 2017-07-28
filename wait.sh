@@ -5,8 +5,7 @@
 #    ./wait N name
 #
 # Checks every 5 seconds that the number of subprocesses running on node name is
-# greater than N and that the global lock is free. If this is not the case, then
-# returns.
+# greater than N. If this is not the case, then returns.
 
 # if N is set to 0 or empty
 if [ $1 == "0" ]; then
