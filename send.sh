@@ -8,11 +8,6 @@
 #
 #    mjm send -n name command
 #
-# The screen session is killed after the command returns. EXPLAIN THE NODE STORY. The actual screen session name is
-#
-#    mjm.name.i
-#
-# where i is the smallest job number available (starting from 0). If no name is provided then .name is omited.
 
 # get job name from options
 NAME=""

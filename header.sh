@@ -2,7 +2,7 @@
 
 # Prints standard header for log files. Usage:
 #
-#    ./header.sh
+#    mjm header
 #
 
 echo "MJM: minimal job manager"
