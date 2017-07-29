@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# All jobs in a node. Usage:
+# Kill jobs. Usage:
 #
-#    ./kill.sh name
+#    mjm kill job1 job2 ...
 #
 
-# get all sub jobs with that name (i.e. name followed by .number)
-read -a PIDS <<< $( ${MJM_PATH}/list.sh $1 )
+# get all pids
+read -a PIDS <<< $( mjm pid $@ )
 
 # quit all sesssions
 for i in "${PIDS[@]}"; do
-  screen -X -S $i kill
+  #screen -X -S $i kill
 done

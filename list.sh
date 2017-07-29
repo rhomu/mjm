@@ -5,7 +5,7 @@
 #    mjm list
 #
 # Options: 
-#   -p       Prints only PIDS (for internal use)
+#   -p       Prints only job names (for internal use)
 #   -r       Prints only running jobs
 #   -q       Prints only queued jobs
 
@@ -30,14 +30,14 @@ while getopts "prq" opt; do
   esac
 done
 
-PIDS=""
+JOBS=""
 
 # get pids (and print) for a certain priority
 function get_pids
 {
-  read -a GETPIDS <<< $( ls -cr -I "*.status" $MJM_QUEUE_PATH/$1 )
+  read -a STAMPS <<< $( ls -cr -I "*.status" $MJM_QUEUE_PATH/$1 )
 
-  for i in "${GETPIDS[@]}"
+  for i in "${STAMPS[@]}"
   do
     CMD=$( cat $MJM_QUEUE_PATH/$1/$i )
     STA=$( cat $MJM_QUEUE_PATH/$1/$i.status )
@@ -46,7 +46,7 @@ function get_pids
           ( $RONLY == true  && "$STA" == "r" ) ||
           ( $QONLY == true  && "$STA" == "q" ) ]] ;
     then
-      PIDS="$PIDS $i"
+      JOBS="$JOBS $i"
       if [ $PRINT == true ]; then
         printf " %-19s %-20s %-20s %s\n" "$i" "$1" "$STA" "$CMD"
       fi
@@ -66,12 +66,8 @@ get_pids "normal"
 get_pids "low"
 get_pids "very-low"
 
-
 # print only pids
 if [ $PRINT == false ]
 then
-  echo "${PIDS[*]}"
+  echo "${JOBS[*]}"
 fi
-
-# get directly from screen (old but might be useful)
-# read -a PIDS <<< $(screen -ls | awk "/mjm${NAME}.*\t/ {print \$1}")
