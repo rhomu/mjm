@@ -17,13 +17,16 @@
 # get job name from options
 NAME=""
 PRIORITY="normal"
+OPT_SHIFT="1"
 while getopts ":n:p:" opt; do
   case $opt in
     n)
       NAME=".$OPTARG" >&2
+      OPT_SHIFT=$(($OPT_SHIFT + 2))
       ;;
     p)
       PRIORITY="$OPTARG" >&2
+      OPT_SHIFT=$(($OPT_SHIFT + 2))
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -76,11 +79,7 @@ for (( i=0 ;; ++i )); do
 done
 
 # get the command...
-if [ -z ${NAME} ] ; then
-  CMD="${@}"
-else
-  CMD="${@:3}"
-fi
+CMD="${@:$OPT_SHIFT}"
 # ...check that CMD is not empty
 if [[ -z "${CMD// }" ]]; then
   echo "Discarding empty command."
@@ -102,9 +101,16 @@ PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
 # ...name of the queue file for the job
 QUEUE_FILE=$MJM_QUEUE_PATH/$PRIORITY/$PID.$JNAME
 # ...write queue file
-touch $QUEUE_FILE
+echo "q" > $QUEUE_FILE
+# ...produce screen command
+SCREEN_CMD=":"
+#SCREEN_CMD="$SCREEN_CMD ; ${MJM_PATH}/wait.sh ${MJM_NMAX}" # wait for other jobs to finish
+SCREEN_CMD="$SCREEN_CMD ; echo \"${CMD}\" > $QUEUE_FILE" # init queue file to
+SCREEN_CMD="$SCREEN_CMD ; echo \"r\" >> $QUEUE_FILE" # set queue file to r (running)
+SCREEN_CMD="$SCREEN_CMD ; ( ( ${MJM_PATH}/header.sh ; ${CMD} ) | tee ${LNAME} )" # the actual cmd + log
+SCREEN_CMD="$SCREEN_CMD ; rm $QUEUE_FILE -f" # remove queue file
 # ...send the command to the screen session
-screen -S "$PID.$JNAME" -p 0 -X stuff "${MJM_PATH}/wait.sh ${MJM_NMAX} ; ( ( ${MJM_PATH}/header.sh ; ${CMD} ) | tee ${LNAME} ) ; rm $QUEUE_FILE -f ; exit$(printf \\r)"
+screen -S "$PID.$JNAME" -p 0 -X stuff "$SCREEN_CMD ; exit$(printf \\r)"
 
 # unlock
 mjm unlock
