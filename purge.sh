@@ -6,7 +6,7 @@
 #
 
 # wait for all jobs to finsh
-mjm wait 1 mjm
+#mjm wait 1 mjm
 
 rm -f $MJM_QUEUE_PATH/very-high/*
 rm -f $MJM_QUEUE_PATH/high/*

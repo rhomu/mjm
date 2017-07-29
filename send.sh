@@ -63,6 +63,14 @@ fi
 # lock
 mjm lock
 
+# get the command...
+CMD="${@:$OPT_SHIFT}"
+# ...check that CMD is not empty
+if [[ -z "${CMD// }" ]]; then
+  echo "Discarding empty command."
+  exit 1
+fi
+
 # construct job name...
 # ...get all numbers of sub-jobs (i.e. name followed by .number)
 read -a PIDS <<< $( screen -ls \
@@ -77,14 +85,6 @@ for (( i=0 ;; ++i )); do
     break
   fi
 done
-
-# get the command...
-CMD="${@:$OPT_SHIFT}"
-# ...check that CMD is not empty
-if [[ -z "${CMD// }" ]]; then
-  echo "Discarding empty command."
-  exit 1
-fi
 # ...and get timestamp
 TS=$(date +%s)
 # ...and log file name
@@ -99,16 +99,16 @@ JNAME_ESCAPE=$(echo "$JNAME" | sed 's/\./\\\./g')
 # ...get PID back (there are sometimes conflicts)
 PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
 # ...name of the queue file for the job
-QUEUE_FILE=$MJM_QUEUE_PATH/$PRIORITY/$PID.$JNAME
+QUEUE_FILE=$MJM_QUEUE_PATH/$PRIORITY/$JNAME
 # ...write queue file
-echo "q" > $QUEUE_FILE
+echo \"${CMD}\" > $QUEUE_FILE
+echo "q" > ${QUEUE_FILE}.status
 # ...produce screen command
 SCREEN_CMD=":"
-#SCREEN_CMD="$SCREEN_CMD ; ${MJM_PATH}/wait.sh ${MJM_NMAX}" # wait for other jobs to finish
-SCREEN_CMD="$SCREEN_CMD ; echo \"${CMD}\" > $QUEUE_FILE" # init queue file to
-SCREEN_CMD="$SCREEN_CMD ; echo \"r\" >> $QUEUE_FILE" # set queue file to r (running)
-SCREEN_CMD="$SCREEN_CMD ; ( ( ${MJM_PATH}/header.sh ; ${CMD} ) | tee ${LNAME} )" # the actual cmd + log
-SCREEN_CMD="$SCREEN_CMD ; rm $QUEUE_FILE -f" # remove queue file
+SCREEN_CMD="$SCREEN_CMD ; mjm queue $JNAME" # wait for other jobs to finish
+SCREEN_CMD="$SCREEN_CMD ; echo \"r\" > ${QUEUE_FILE}.status" # set queue file status to r (running)
+SCREEN_CMD="$SCREEN_CMD ; ( ( mjm header ; ${CMD} ) | tee ${LNAME} )" # the actual cmd + log
+SCREEN_CMD="$SCREEN_CMD ; rm $QUEUE_FILE ${QUEUE_FILE}.status -f" # remove queue file
 # ...send the command to the screen session
 screen -S "$PID.$JNAME" -p 0 -X stuff "$SCREEN_CMD ; exit$(printf \\r)"
 

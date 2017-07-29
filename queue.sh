@@ -11,9 +11,15 @@ if [ -z $1 ]; then
 fi
 
 # get all jobs in queue order 
-read -a PIDS <<< $( mjm list -p )
+read -a RPIDS <<< $( mjm list -rp )
+read -a QPIDS <<< $( mjm list -qp )
 
-while [ ${PIDS[0]} != "$1" ]; do
+# check that 
+#   * total number of running jobs is smaller than MJM_MAX
+#   * the job $1 is next in the queue
+while [[ "${#RPIDS[@]}" -ge "$MJM_MAX" ||  ${QPIDS[0]} != $1 ]]
+do
   sleep 5
-  read -a PIDS <<< $( mjm list -p )
+  read -a RPIDS <<< $( mjm list -rp )
+  read -a QPIDS <<< $( mjm list -qp )
 done
