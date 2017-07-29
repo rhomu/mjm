@@ -105,10 +105,10 @@ echo \"${CMD}\" > $QUEUE_FILE
 echo "q" > ${QUEUE_FILE}.status
 # ...produce screen command
 SCREEN_CMD=":"
+SCREEN_CMD="$SCREEN_CMD ; trap 'rm -f $QUEUE_FILE ${QUEUE_FILE}.status ; exit 1' EXIT TERM INT" # trap queue file deletion
 SCREEN_CMD="$SCREEN_CMD ; mjm queue $JNAME" # wait for other jobs to finish
 SCREEN_CMD="$SCREEN_CMD ; echo \"r\" > ${QUEUE_FILE}.status" # set queue file status to r (running)
 SCREEN_CMD="$SCREEN_CMD ; ( ( mjm header ; ${CMD} ) | tee ${LNAME} )" # the actual cmd + log
-SCREEN_CMD="$SCREEN_CMD ; rm $QUEUE_FILE ${QUEUE_FILE}.status -f" # remove queue file
 # ...send the command to the screen session
 screen -S "$PID.$JNAME" -p 0 -X stuff "$SCREEN_CMD ; exit$(printf \\r)"
 
