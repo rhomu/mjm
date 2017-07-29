@@ -2,16 +2,16 @@
 
 # Attach to a running session. Usage:
 #
-#    mjm attach name
+#    mjm attach job
 #
 
-# get all jobs that match
-read -a JOBS <<< $( mjm list $1 )
+# get full PID directly from screen
+read -a PIDS <<< $(screen -ls | awk "/${1}.*\t/ {print \$1}")
 
-if [ ${#JOBS[@]} -ne 1 ]; then
+if [ ${#PIDS[@]} -ne 1 ]; then
   echo "Name does not an unique terminal node. Can not attach."
   exit 1
 fi
 
 # attach
-screen -r ${JOBS[0]}
+screen -r ${PIDS[0]}

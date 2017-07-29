@@ -88,7 +88,7 @@ done
 # ...and get timestamp
 TS=$(date +%s)
 # ...and log file name
-LNAME=${JNAME}.${TS}.out
+LNAME=${TS}.${JNAME}.out
 
 # send job...
 echo "Sending job ${JNAME} to ${LNAME} ... "
