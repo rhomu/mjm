@@ -20,11 +20,12 @@ while getopts "p" opt; do
   esac
 done
 
+PIDS=""
+
 # get pids (and print) for a certain priority
 function get_pids
 {
   read -a GETPIDS <<< $( ls -c $MJM_QUEUE_PATH/$1 )
-  PIDS="$PIDS $GETPIDS"
 
   if [ $PRINT == true ]
   then
@@ -32,9 +33,11 @@ function get_pids
     do
       read -r CMD <<< $( sed '1q;d' $MJM_QUEUE_PATH/$1/$i )
       STA=$( sed '2q;d' $MJM_QUEUE_PATH/$1/$i )
-      printf " %-19s %-20s %-20s %s\n" "$i" "very-high" "$STA" "$CMD"
+      printf " %-19s %-20s %-20s %s\n" "$i" "$1" "$STA" "$CMD"
     done
   fi
+
+  PIDS="$PIDS${GETPIDS[@]}"
 }
 
 if [ $PRINT == true ]
@@ -43,7 +46,6 @@ then
   echo "------------------------------------------------"
 fi
 
-PIDS=""
 get_pids "very-high"
 get_pids "high"
 get_pids "normal"
