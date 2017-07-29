@@ -20,8 +20,6 @@ while getopts "p" opt; do
   esac
 done
 
-PIDS=""
-
 # get pids (and print) for a certain priority
 function get_pids
 {
@@ -45,17 +43,19 @@ then
   echo "------------------------------------------------"
 fi
 
+PIDS=""
 get_pids "very-high"
 get_pids "high"
 get_pids "normal"
 get_pids "low"
 get_pids "very-low"
 
-# get all sub jobs with that name (i.e. name followed by .number)
-# read -a PIDS <<< $(screen -ls | awk "/mjm${NAME}.*\t/ {print \$1}")
 
-# print it
+# print only pids
 if [ $PRINT == false ]
 then
   echo "${PIDS[*]}"
 fi
+
+# get directly from screen (old but might be useful)
+# read -a PIDS <<< $(screen -ls | awk "/mjm${NAME}.*\t/ {print \$1}")
