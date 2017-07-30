@@ -1,0 +1,5 @@
+Lock globally (for internal use). Usage:
+
+   mjm lock
+
+If lock is present, wait until unlocked.

@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Get full PID of given jobs. Usage:
-#
-#    mjm pid job1 job2 ...
-#
-
 PIDS=""
 
 for i in "$@"

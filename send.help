@@ -1,0 +1,10 @@
+Send job using screen. Usage:
+
+   mjm send command
+
+or
+
+   mjm send -n name command
+
+The job is sent to a newly created session which can be reattached with the
+attach command.

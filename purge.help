@@ -1,0 +1,5 @@
+Purge all queue files. Usage
+
+   mjm purge
+
+Warning: if jobs are still in the queue you will be unable to manage them.

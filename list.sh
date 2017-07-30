@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# List all jobs in correct queue order. Usage
-#
-#    mjm list
-#
-# Options: 
-#   -p       Prints only job names (for internal use)
-#   -r       Prints only running jobs
-#   -q       Prints only queued jobs
-
 PRINT=true
 RONLY=false
 QONLY=false

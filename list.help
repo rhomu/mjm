@@ -1,0 +1,8 @@
+List all jobs in correct queue order. Usage
+
+   mjm list
+
+Options: 
+  -p       Prints only job names
+  -r       Prints only running jobs
+  -q       Prints only queued jobs

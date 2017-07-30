@@ -1,0 +1,4 @@
+Unlock global lock (for internal use). Usage:
+
+   mjm unlock
+

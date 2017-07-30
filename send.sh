@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# Send job using screen. Usage:
-#
-#    mjm send command
-#
-# or
-#
-#    mjm send -n name command
-#
-
 # get job name from options
 NAME=""
 PRIORITY="normal"

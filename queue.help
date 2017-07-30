@@ -1,0 +1,6 @@
+Wait in the queue. Usage
+
+   mjm queue job
+
+Checks every 5 seconds that the given job is the next in the queue and returns
+when it is. The order is as given by mjm list and respects priority.
