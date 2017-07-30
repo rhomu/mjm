@@ -1,0 +1,106 @@
+#!/bin/bash
+
+# Check whether a command exists - returns 0 if it does, 1 if it does not
+exists()
+{
+  if command -v $1 >/dev/null 2>&1
+  then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# ask for user input (with custom text and default value)
+read_var()
+{
+  read -p "$1 (default $2): " $path
+
+  if [ -z $path ]
+  then
+    path=$2
+  fi
+
+  echo $path
+}
+
+echo "MJM: a minimal job manager"
+echo "(c)    Romain Mueller 2017"
+echo "=========================="
+
+# check deps
+
+echo
+
+echo "Checking required programs:"
+
+echo -n "  checking for screen ... "
+if [[ $( exists "screen" ) == 0 ]]; then
+  echo "screen is missing!"
+  exit 1
+else
+  echo "done"
+fi
+
+echo
+
+# get default params
+
+INSTALL_DIR=$( pwd )
+MJM_CONFIG_PATH=$HOME/.config/mjm/
+
+echo "Please define:"
+
+MJM_LOCK_PATH=$( read_var "  location of lock file" $MJM_CONFIG_PATH/.lock )
+MJM_QUEUE_PATH=$( read_var "  location of queue directory" $MJM_CONFIG_PATH/queue/ )
+MJM_MAX=$( read_var "  maximum number of simultaneous jobs" $(grep -c ^processor /proc/cpuinfo) )
+
+# create dir
+
+echo
+
+if ! mkdir $MJM_CONFIG_PATH; then
+  echo "Error"
+  exit 1
+else
+  echo "Created configuration directory $MJM_CONFIG_PATH"
+fi
+
+if ! mkdir $MJM_QUEUE_PATH; then
+  echo "Error"
+  exit 1
+else
+  mkdir $MJM_QUEUE_PATH/very-high
+  mkdir $MJM_QUEUE_PATH/high
+  mkdir $MJM_QUEUE_PATH/normal
+  mkdir $MJM_QUEUE_PATH/low
+  mkdir $MJM_QUEUE_PATH/very-low
+
+  echo "Created queue directories in $MJM_QUEUE_PATH"
+fi
+
+# write config file
+
+cat << EOF > $MJM_CONFIG_PATH/mjm.cfg
+# Installation path
+export MJM_PATH=$INSTALL_DIR
+
+# Config dir location
+export MJM_CONFIG_PATH=$MJM_CONFIG_PATH
+
+# Global lock file
+export MJM_LOCK_PATH=$MJM_LOCK_PATH
+
+# Queue folder
+export MJM_QUEUE_PATH=$MJM_QUEUE_PATH
+
+# Overall maximal number of jobs on this machine
+export MJM_MAX=$MJM_MAX
+EOF
+
+echo "Wrote configuration file $MJM_CONFIG_PATH/mjm.cfg"
+
+# create simlink
+mkdir $HOME/bin -p
+ln -s $INSTALL_DIR/mjm $HOME/bin/
+echo "Created simlink to ${HOME}/bin/"

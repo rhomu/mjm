@@ -13,6 +13,11 @@
 
 #!/bin/bash
 
+if [ -z $1 ]; then
+  echo "Please provide a command. Type 'help' for help."
+  exit 1
+fi
+
 # get env vars
 source ~/.config/mjm/mjm.cfg
 
