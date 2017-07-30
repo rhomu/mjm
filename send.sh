@@ -45,7 +45,7 @@ else
   echo "Unknown priority '$PRIORITY' (should be very-low, low, normal, high, very-high)"
   exit 1
 fi
- 
+
 # lock
 mjm lock
 
@@ -59,13 +59,10 @@ fi
 
 # construct job name...
 # ...get all numbers of sub-jobs (i.e. name followed by .number)
-read -a PIDS <<< $( screen -ls \
-                    | awk "/mjm${NAME}[.0-9]*\t/ {print \$1}" \
-                    | sed "s/.*\.//g"
-                  )
+JOBS=$( mjm list -p )
 # ...find smallest number not in this list
 for (( i=0 ;; ++i )); do
-  if ! echo " ${PIDS[*]} " | grep " $i " -q ; then
+  if ! ( echo ${JOBS[@]} | grep $i -q ); then
     # ...and add it to jobname
     JNAME="mjm${NAME}.$i"
     break
