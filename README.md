@@ -79,3 +79,7 @@ mjm unlock
 unlock queue. MJM uses a global lock to avoid race conditions while accessing
 the queue files. Can be useful if something went wrong while submitting a job.
 
+## Credits
+Copyleft 🄯 2017 Romain Mueller
+
+name do surname at gmail dot com
