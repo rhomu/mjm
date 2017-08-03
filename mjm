@@ -4,7 +4,7 @@
 #
 # This file simply dispatches the commands as follows:
 #
-#   mjm command arguments 
+#   mjm command arguments
 #
 # gives
 #
@@ -22,4 +22,4 @@ fi
 source ~/.config/mjm/mjm.cfg
 
 # run the command
-${MJM_PATH}/${1}.sh ${@:2}
+${MJM_PATH}/cmds/${1}.sh ${@:2}

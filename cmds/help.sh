@@ -7,7 +7,7 @@
 
 if [ -z $1 ]
 then
-  cat $MJM_PATH/mjm.help
+  cat $MJM_PATH/help/mjm.help
 else
-  cat $MJM_PATH/$1.help
+  cat $MJM_PATH/help/$1.help
 fi
