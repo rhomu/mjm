@@ -14,18 +14,18 @@ exists()
 # ask for user input (with custom text and default value)
 read_var()
 {
-  read -p "$1 (default $2): " $path
+  read -p "$1 (default $2): " var
 
-  if [ -z $path ]
+  if [ -z $var ]
   then
-    path=$2
+    var=$2
   fi
 
-  echo $path
+  echo $var
 }
 
 echo "MJM: a minimal job manager"
-echo "(c)    Romain Mueller 2017"
+echo "(!c)   Romain Mueller 2017"
 echo "=========================="
 
 # check deps
@@ -60,7 +60,7 @@ MJM_MAX=$( read_var "  maximum number of simultaneous jobs" $(grep -c ^processor
 echo
 
 if ! mkdir $MJM_CONFIG_PATH; then
-  echo "Error"
+  echo "Error: delete any prior installation of MJM to proceed."
   exit 1
 else
   echo "Created configuration directory $MJM_CONFIG_PATH"
