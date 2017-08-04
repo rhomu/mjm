@@ -4,7 +4,7 @@ Send job using screen. Usage:
 
 or
 
-   mjm send -n name command
+   mjm send -n name -p priority command
 
 The job is sent to a newly created session which can be reattached with the
 attach command.

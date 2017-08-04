@@ -1,4 +1,4 @@
-Lock globally (for internal use). Usage:
+Lock globally (internal). Usage:
 
    mjm lock
 

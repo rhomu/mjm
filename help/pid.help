@@ -2,4 +2,4 @@ Get full PID of given jobs. Usage:
 
    mjm pid job1 job2 ...
 
-This is useful for managing the jobs with screen directly.
+Note that brace expansion and wildcards can be used.

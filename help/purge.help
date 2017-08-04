@@ -1,5 +1,6 @@
 Purge all queue files. Usage
 
-   mjm purge
+   mjm purge [job1] [job2]
 
 Warning: if jobs are still in the queue you will be unable to manage them.
+If no argument is provided, all the queue files will be deleted.

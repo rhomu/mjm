@@ -2,4 +2,4 @@ Kill jobs. Usage:
 
    mjm kill job1 job2 ...
 
-Note that bash brace expansion can be used to handle multiple jobs.
+Note that bash brace expansion and wild cards can be used to handle multiple jobs.

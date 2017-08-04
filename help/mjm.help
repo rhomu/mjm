@@ -1,1 +1,17 @@
-MJM help
+usage: mjm <cmd> [<args>]
+
+These are the available commands:
+
+  send     Send job in the queue
+  list     Print a list of running and queuing jobs
+  kill     Kill jobs
+  attach   Attach terminal
+  pid      Obtain real PID
+  help     Print help
+
+These are debugging commands:
+
+  purge   Deletes jobs from the queue without stopping them
+  lock    Lock global lock
+  unlock  Unlock global lock
+  header  Print header for log files
