@@ -74,21 +74,29 @@ TS=$(date +%s)
 LNAME=${TS}.${JNAME}.out
 
 # send job...
-echo "Sending job ${JNAME} to ${LNAME} ... "
-# ...create session
-screen -dmS "$JNAME" ; sleep 0.5
+echo "Sending job $JNAME to $LNAME ... "
 # ...escape points in job name
 JNAME_ESCAPE=$(echo "$JNAME" | sed 's/\./\\\./g')
+# ...check if there is no job running with the same name
+PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
+if ! [ -z "$PID" ]; then
+  echo "Error: there is already a job with name $JNAME."
+  mjm unlock && exit 1
+fi
+# ...create session
+screen -dmS "$JNAME" ; sleep 0.5
 # ...get PID back (there are sometimes conflicts)
 PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
 # ...name of the queue file for the job
 QUEUE_FILE=$MJM_QUEUE_PATH/$PRIORITY/$JNAME
-# ...write queue file
-echo \"${CMD}\" > $QUEUE_FILE
-echo "q" > ${QUEUE_FILE}.status
+# ...write queue files
+touch $QUEUE_FILE
+echo \"${CMD}\" > $QUEUE_FILE.cmd
+echo "q" > $QUEUE_FILE.status
+echo $PID > $QUEUE_FILE.pid
 # ...produce screen command
 SCREEN_CMD=":"
-SCREEN_CMD="$SCREEN_CMD ; trap 'rm -f $QUEUE_FILE ${QUEUE_FILE}.status ; exit 1' EXIT TERM INT" # trap queue file deletion
+SCREEN_CMD="$SCREEN_CMD ; trap 'rm -f $QUEUE_FILE* ; exit 1' EXIT TERM INT" # trap queue file deletion
 SCREEN_CMD="$SCREEN_CMD ; mjm queue $JNAME" # wait for other jobs to finish
 SCREEN_CMD="$SCREEN_CMD ; echo \"r\" > ${QUEUE_FILE}.status" # set queue file status to r (running)
 SCREEN_CMD="$SCREEN_CMD ; ( ( mjm header ; ${CMD} ) | tee ${LNAME} )" # the actual cmd + log

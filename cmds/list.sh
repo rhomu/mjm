@@ -23,15 +23,15 @@ done
 
 JOBS=""
 
-# get pids (and print) for a certain priority
-function get_pids
+# get job names (and print) for a certain priority
+function get_jobs
 {
   #read -a STAMPS <<< $( ls -cr -I "*.status" $MJM_QUEUE_PATH/$1/ )
-  STAMPS=($(ls -cr -I "*.status" $MJM_QUEUE_PATH/$1/))
+  STAMPS=($(ls -cr -I "*.status" -I "*.cmd" -I "*.pid" $MJM_QUEUE_PATH/$1/))
 
   for i in "${STAMPS[@]}"
   do
-    CMD=$( cat $MJM_QUEUE_PATH/$1/$i )
+    CMD=$( cat $MJM_QUEUE_PATH/$1/$i.cmd )
     STA=$( cat $MJM_QUEUE_PATH/$1/$i.status )
 
     if [[ ( $RONLY == false && $QONLY == false ) ||
@@ -52,13 +52,13 @@ then
   echo "------------------------------------------------"
 fi
 
-get_pids "very-high"
-get_pids "high"
-get_pids "normal"
-get_pids "low"
-get_pids "very-low"
+get_jobs "very-high"
+get_jobs "high"
+get_jobs "normal"
+get_jobs "low"
+get_jobs "very-low"
 
-# print only pids
+# print only job names
 if [ $PRINT == false ]
 then
   echo "${JOBS[@]}"

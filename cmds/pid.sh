@@ -4,10 +4,16 @@ PIDS=""
 
 for i in "$@"
 do
-  PID=$( screen -ls | awk "/$i.*\t/ {print \$1}" )
-  PID=${PID%.$i}
+  STAMPS=($(ls -cr $MJM_QUEUE_PATH/**/$i.pid 2> /dev/null))
 
-  PIDS="${PIDS[@]}$PID "
+  for j in "${STAMPS[@]}"
+  do
+    PID=$( cat $j )
+    PIDS="${PIDS[@]}$PID "
+  done
 done
 
-echo "${PIDS[@]}"
+if ! [ -z ${PIDS} ]
+then
+  echo "${PIDS[@]}"
+fi
