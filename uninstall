@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source "${XDG_CONFIG_HOME:-$HOME/.config}"/mjm/mjm.cfg
+echo "Removing $MJM_CONFIG_PATH ..."; rm -rI "$MJM_CONFIG_PATH" && echo " done"
+echo "Removing $MJM_CACHE_PATH ..."; rm -rI "$MJM_CACHE_PATH" && echo " done"

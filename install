@@ -3,12 +3,8 @@
 # Check whether a command exists - returns 0 if it does, 1 if it does not
 exists()
 {
-  if command -v "$1" >/dev/null 2>&1
-  then
-    return 0
-  else
-    return 1
-  fi
+  command -v "$1" >/dev/null 2>&1 || return 0
+  return 1
 }
 
 # ask for user input (with custom text and default value)
@@ -35,8 +31,9 @@ echo
 echo "Checking required programs:"
 
 echo -n "  checking for screen ... "
-if [[ $( exists "screen" ) == 0 ]]; then
-  echo "screen is missing!"
+if $( exists "screen" ); then
+  echo "error"
+  echo "Please install screen first"
   exit 1
 else
   echo "done"
@@ -52,9 +49,10 @@ MJM_CACHE_PATH="${XDG_CACHE_HOME:-$HOME/.cache}"/mjm/
 
 echo "Please define:"
 
-MJM_LOCK_PATH=$( read_var "  location of lock file" "$MJM_CACHE_PATH"/.lock )
-MJM_QUEUE_PATH=$( read_var "  location of queue directory" "$MJM_CACHE_PATH"/queue/ )
+MJM_CACHE_PATH=$( read_var "  location of cache directory" "$MJM_CACHE_PATH" )
 MJM_MAX=$( read_var "  maximum number of simultaneous jobs" $(grep -c ^processor /proc/cpuinfo) )
+MJM_LOCK_PATH="$MJM_CACHE_PATH"/.lock
+MJM_QUEUE_PATH="$MJM_CACHE_PATH"/queue/
 
 # create dir
 
