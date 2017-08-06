@@ -3,16 +3,15 @@
 # get job name from options
 NAME=""
 PRIORITY="normal"
-OPT_SHIFT="1"
 while getopts ":n:p:" opt; do
   case $opt in
     n)
       NAME=".$OPTARG" >&2
-      OPT_SHIFT=$(($OPT_SHIFT + 2))
+      shift 2
       ;;
     p)
       PRIORITY="$OPTARG" >&2
-      OPT_SHIFT=$(($OPT_SHIFT + 2))
+      shift 2
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -49,10 +48,9 @@ fi
 # lock
 mjm lock
 
-# get the command...
-CMD="${@:$OPT_SHIFT}"
 # ...check that CMD is not empty
-if [[ -z "${CMD// }" ]]; then
+CMD="$*"
+if [[ -z "$CMD" ]]; then
   echo "Discarding empty command."
   exit 1
 fi
@@ -62,23 +60,23 @@ fi
 JOBS=$( mjm list -p )
 # ...find smallest number not in this list
 for (( i=0 ;; ++i )); do
-  if ! ( echo ${JOBS[@]} | grep $i -q ); then
+  if ! ( echo "${JOBS[@]}" | grep $i -q ); then
     # ...and add it to jobname
-    JNAME="mjm${NAME}.$i"
+    JNAME="mjm$NAME.$i"
     break
   fi
 done
 # ...and get timestamp
 TS=$(date +%s)
 # ...and log file name
-LNAME=${TS}.${JNAME}.out
+LNAME=$TS.$JNAME.out
 
 # send job...
 echo "Sending job $JNAME to $LNAME ... "
 # ...escape points in job name
-JNAME_ESCAPE=$(echo "$JNAME" | sed 's/\./\\\./g')
+JNAME_ESCAPE="${JNAME/\./\\\.}"
 # ...check if there is no job running with the same name
-PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
+PID=$(screen -ls | awk "/\\.$JNAME_ESCAPE\\t/ {print strtonum(\$1)}")
 if ! [ -z "$PID" ]; then
   echo "Error: there is already a job with name $JNAME."
   mjm unlock && exit 1
@@ -86,14 +84,14 @@ fi
 # ...create session
 screen -dmS "$JNAME" ; sleep 0.5
 # ...get PID back (there are sometimes conflicts)
-PID=$(screen -ls | awk "/\.${JNAME_ESCAPE}\t/ {print strtonum(\$1)}")
+PID=$(screen -ls | awk "/\\.$JNAME_ESCAPE\\t/ {print strtonum(\$1)}")
 # ...name of the queue file for the job
 QUEUE_FILE=$MJM_QUEUE_PATH/$PRIORITY/$JNAME
 # ...write queue files
-touch $QUEUE_FILE
-echo \"${CMD}\" > $QUEUE_FILE.cmd
-echo "q" > $QUEUE_FILE.status
-echo $PID > $QUEUE_FILE.pid
+touch "$QUEUE_FILE"
+echo \""${CMD}"\" > "$QUEUE_FILE".cmd
+echo "q" > "$QUEUE_FILE".status
+echo "$PID" > "$QUEUE_FILE".pid
 # ...produce screen command
 SCREEN_CMD=":"
 SCREEN_CMD="$SCREEN_CMD ; trap 'rm -f $QUEUE_FILE* ; exit 1' EXIT TERM INT" # trap queue file deletion

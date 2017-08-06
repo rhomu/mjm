@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # mjm : a minimal job manager written in bash (yes bash)
 #
 #   (c) Romain Mueller, name dot surname at gmail dot com
@@ -11,9 +13,7 @@
 #   /path/to/mjm/command.sh arguments
 #
 
-#!/bin/bash
-
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
   echo "Please provide a command. Type 'help' for help."
   exit 1
 fi
@@ -22,4 +22,4 @@ fi
 source ~/.config/mjm/mjm.cfg
 
 # run the command
-${MJM_PATH}/cmds/${1}.sh ${@:2}
+"$MJM_PATH"/cmds/"${1}".sh "${@:2}"
