@@ -55,7 +55,7 @@ Options:
 
 ### Interacting with running/queuing jobs
 ```
-mjm atach job
+mjm attach job
 ```
 attach to the screen session corresponding to a given job. Can be required in
 order to interact with a running job. Depending on you settings the job can be
