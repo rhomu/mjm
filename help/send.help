@@ -6,5 +6,5 @@ or
 
    mjm send -n name -p priority command
 
-The job is sent to a newly created session which can be reattached with the
-attach command.
+where priority can be very-high, high, normal, low, very-low. The job is sent to
+a newly created session which can be reattached with the attach command.
