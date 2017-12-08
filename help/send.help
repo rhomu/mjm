@@ -4,7 +4,9 @@ Send job using screen. Usage:
 
 or
 
-   mjm send -n name -p priority command
+   mjm send -t tag -p priority -n niceness command
 
-where priority can be very-high, high, normal, low, very-low. The job is sent to
-a newly created session which can be reattached with the attach command.
+where priority can be very-high, high, normal, low, very-low, and niceness is
+the niceness parameter to be passed to nice. The job is sent to a newly created
+screen session with name derived from tag and can be reattached with the attach
+command.

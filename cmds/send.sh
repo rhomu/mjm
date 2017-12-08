@@ -3,9 +3,10 @@
 # get job name from options
 NAME=""
 PRIORITY="normal"
-while getopts ":n:p:" opt; do
+NICED="nice"
+while getopts ":t:p:n:" opt; do
   case $opt in
-    n)
+    t)
       NAME=".$OPTARG" >&2
       shift 2
       ;;
@@ -13,13 +14,16 @@ while getopts ":n:p:" opt; do
       PRIORITY="$OPTARG" >&2
       shift 2
       ;;
-    \?)
-      echo "Invalid option: -$OPTARG" >&2
-      exit 1
+    n)
+      NICED="nice -n $OPTARG" >&2
+      shift 2
       ;;
     :)
       echo "Option -$OPTARG requires an argument." >&2
       exit 1
+      ;;
+    *)
+      break
       ;;
   esac
 done
@@ -97,7 +101,7 @@ SCREEN_CMD=":"
 SCREEN_CMD="$SCREEN_CMD ; trap 'rm -f $QUEUE_FILE* ; exit 1' EXIT TERM INT" # trap queue file deletion
 SCREEN_CMD="$SCREEN_CMD ; mjm queue $JNAME" # wait for other jobs to finish
 SCREEN_CMD="$SCREEN_CMD ; echo \"r\" > ${QUEUE_FILE}.status" # set queue file status to r (running)
-SCREEN_CMD="$SCREEN_CMD ; ( ( mjm header ; ${CMD} ) | tee ${LNAME} )" # the actual cmd + log
+SCREEN_CMD="$SCREEN_CMD ; ( ( mjm header ; ${NICED} ${CMD} ) | tee ${LNAME} )" # the actual cmd + log
 # ...send the command to the screen session
 screen -S "$PID.$JNAME" -p 0 -X stuff "$SCREEN_CMD ; exit$(printf \\r)"
 
